@@ -25,7 +25,7 @@ function initialize() {
 
   Object.defineProperty(date_input_proto, "tabIndex", {
     get: function() { return 5; }
-  };
+  });
 
   var DateInput = document.registerElement("date-input", { prototype: date_input_proto });
 
