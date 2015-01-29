@@ -23,6 +23,10 @@ function initialize() {
     return false;
   };
 
+  Object.defineProperty(date_input_proto, "tabIndex", {
+    get: function() { return 5; }
+  };
+
   var DateInput = document.registerElement("date-input", { prototype: date_input_proto });
 
   var focus_button = document.getElementById("focus_on_birthday");
@@ -41,7 +45,7 @@ window.onload = initialize;
   <script>
   </script>
   <span>
-    <input size=4 data-year>/<input size=2 data-month>/<input size=2 data-day>
+    <input size=4 placeholder="YYYY" data-year>/<input size=2 placeholder="MM" data-month>/<input size=2 placeholder="DD" data-day>
   </span>
 </template>
 </head>
