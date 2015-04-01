@@ -1,0 +1,111 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<polymer-element name="date-input">
+  <template>
+    <style>
+      :host {
+	display: inline;
+        width: 72px;
+        height: 13px;
+	border: 2px;
+	padding; 1px;
+      }
+
+      div#date-container div {
+	display: inline;
+      }
+
+      div#date-container div#date-control {
+        display: inline /* none */;
+      }
+
+      :host(:hover) {
+        color: red;
+      }
+
+      :host(:hover) div#date-control {
+        display: inline;
+      }
+
+      div#date-container {
+        display: inline;
+        background-color: white;
+      }
+
+      span {
+        outline: none;
+        font-size: 90%;
+      }
+
+      span:focus {
+        background-color: rgb(162, 204, 255);
+      }
+
+      svg {
+        margin: 0;
+      }
+
+      div#date-container div#date-clear svg {
+        fill: white;
+      }
+
+      div#date-container[modified]:hover div#date-clear svg {
+        fill: rgb(188, 188, 188);
+      }
+
+      div#date-container:not(:hover) svg {
+        fill: white;
+      }
+
+      div#date-spin svg:hover {
+        background-color: rgb(234, 234, 234);
+      }
+
+      div#date-picker-dropdown svg:hover {
+        background-color: rgb(234, 234, 234);
+      }
+    </style>
+    <div id="date-container">
+       <div id="date-edit">
+         <span><span tabindex="0"
+           data-month>mm</span>/<span tabindex="0"
+           data-day>dd</span>/<span tabindex="0"
+           data-year>yyyy</span></span>
+       </div>
+       <div id="date-control">
+         <div id="date-clear">
+           <svg  width="12" height="12">
+           <circle cx="6.5" cy="6.5" r="5.5"/>
+           <path d="M4.5,4.5L8.5,8.5" stroke="white"/>
+           <path d="M8.5,4.5L4.5,8.5" stroke="white"/>
+           </svg>
+         </div>
+         <div id="date-spin">
+           <svg width="7" height="12">
+           <path d="M1,6H7L4,1"/>
+           <path d="M1,7H7L4,12"/>
+           </svg>
+         </div>
+         <div id="date-picker-dropdown">
+           <svg width="12" height="12">
+           <path d="M1,1H11L6,11"/>
+           </svg>
+         </div>
+       </div>
+    </div>
+  </template>
+  <script>
+    Polymer('date-input', {
+      year: 0,
+      month: 0,
+      day: 0,
+      modified: false,
+      current_field: 0,
+      created: function() {
+        this.tabIndex = 0;
+        this.tabStop = false;
+      },
+      attached: function() {
+      }
+    });
+  </script>
+</polymer-element>

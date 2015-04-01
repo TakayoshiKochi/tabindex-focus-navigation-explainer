@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,height=device-height,minimum-scale=1,initial-scale=1,user-scalable=yes">
+<title>date-input demo</title>
+<script src="components/webcomponentsjs/webcomponents.js"></script>
+<!-- components -->
+<link rel="import" href="components/polymer/polymer.html">
+<link rel="import" href="components/date-input/date-input.html">
+<!-- inline styles and scripts -->
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'RobotoDraft', sans-serif;
+}
+</style>
+<script>
+</script>
+</head>
+<body unresolved>
+<div>
+date-input:<date-input></date-input>
+</div>
+<div>
+input type=date:<input type="date">
+</div>
+</core-header-panel>
+
+<script>
+var tabs = document.querySelector('paper-tabs');
+tabs.addEventListener('core-select', function() {
+  console.log("Selected: " + tabs.selected);
+});
+</script>
+</body>
+</html>
