@@ -20,19 +20,13 @@ html, body {
 </script>
 </head>
 <body unresolved>
-<div>
-date-input:<date-input></date-input>
-</div>
-<div>
-input type=date:<input type="date">
-</div>
-</core-header-panel>
-
-<script>
-var tabs = document.querySelector('paper-tabs');
-tabs.addEventListener('core-select', function() {
-  console.log("Selected: " + tabs.selected);
-});
-</script>
+<p>
+&lt;date-input&gt;<br>
+<date-input tabindex=1></date-input>
+</p>
+<p>
+&lt;input type=date&gt;<br>
+<input type="date" tabindex=2>
+</p>
 </body>
 </html>
