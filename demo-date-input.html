@@ -21,12 +21,29 @@ html, body {
 </head>
 <body unresolved>
 <p>
+<input placeholder="dummy input">
+</p>
+<p>
 &lt;date-input&gt;<br>
-<date-input tabindex=1></date-input>
+<date-input></date-input>
 </p>
 <p>
 &lt;input type=date&gt;<br>
-<input type="date" tabindex=2>
+<input type="date">
 </p>
+<div id="con">
+</div>
 </body>
+<script>
+var con = document.getElementById("con");
+
+function updateConsole() {
+   var ae = document.activeElement;
+   var s = "document.activeElement: " + ae.tagName + '#' + (ae.id || 'None');
+   con.textContent = s;
+   window.setTimeout(updateConsole, 1000);
+}
+
+updateConsole();
+</script>
 </html>
