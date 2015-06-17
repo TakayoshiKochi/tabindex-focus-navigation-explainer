@@ -1,111 +1,112 @@
 <link rel="import" href="../../components/polymer/polymer.html">
 <dom-module id="date-input">
+  <style>
+    :host {
+      display: inline-block;
+      min-width: 140px;
+      min-height: 24px;
+      max-height: 24px;
+      overflow: hidden;
+      overflow-y: hidden;
+      border: solid 1px rgb(177, 178, 177);
+    }
+
+    div#date-container {
+      width: 100%;
+      height: 100%;
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin: 0px;
+      padding: 2px;
+      background-color: white;
+    }
+
+    div#date-container div {
+      margin: 0px;
+      border: 0px;
+      padding: 0px;
+    }
+
+    div#date-container span {
+      margin: 0px;
+      border: 0px;
+      padding: 0px;
+    }
+
+    div#date-container div#date-edit {
+      height: 20px;
+      flex: 1 0 80px;
+    }
+
+    div#date-container div#date-control {
+      height: 20px;
+      flex: 0 0 50px;
+    }
+
+    div#date-container div#date-control div {
+      display: inline;
+    }
+
+    span {
+      outline: none;
+      font-size: 13px;
+      font-family: monospace;
+    }
+
+    span:focus {
+      background-color: rgb(162, 204, 255);
+    }
+
+    svg {
+      margin: 0;
+    }
+
+    div#date-container svg {
+      fill: white;
+    }
+
+    :host(:hover) div#date-control svg {
+      fill: black;
+    }
+
+    :host(:focus) div#date-control svg {
+      fill: black;
+    }
+
+    div#date-container div#date-clear svg {
+      fill: white;
+    }
+
+    :host(:hover) div#date-container.dirty div#date-clear svg {
+      fill: rgb(188, 188, 188);
+    }
+
+    :host(:focus) div#date-container.dirty div#date-clear svg {
+      fill: rgb(188, 188, 188);
+    }
+
+    div#date-container div#date-control div#date-spin {
+      display: inline-flex;
+      flex-direction: column;
+      min-width: 8px;
+      height: 12px;
+    }
+
+    div#date-container div#date-spin > svg {
+      flex: 0 0 7px;
+    }
+
+    div#date-spin svg:hover {
+      background-color: rgb(234, 234, 234);
+    }
+
+    div#date-picker-dropdown svg:hover {
+      background-color: rgb(234, 234, 234);
+    }
+  </style>
+
   <template>
-    <style>
-      :host {
-	display: inline-block;
-        min-width: 140px;
-        min-height: 24px;
-        max-height: 24px;
-        overflow: hidden;
-        overflow-y: hidden;
-        border: solid 1px rgb(177, 178, 177);
-      }
-
-      div#date-container {
-        width: 100%;
-        height: 100%;
-        display: inline-flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        margin: 0px;
-        padding: 2px;
-        background-color: white;
-      }
-
-      div#date-container div {
-        margin: 0px;
-        border: 0px;
-        padding: 0px;
-      }
-
-      div#date-container span {
-        margin: 0px;
-        border: 0px;
-        padding: 0px;
-      }
-
-      div#date-container div#date-edit {
-        height: 20px;
-        flex: 1 0 80px;
-      }
-
-      div#date-container div#date-control {
-        height: 20px;
-        flex: 0 0 50px;
-      }
-
-      div#date-container div#date-control div {
-        display: inline;
-      }
-
-      span {
-        outline: none;
-        font-size: 13px;
-        font-family: monospace;
-      }
-
-      span:focus {
-        background-color: rgb(162, 204, 255);
-      }
-
-      svg {
-        margin: 0;
-      }
-
-      div#date-container svg {
-        fill: white;
-      }
-
-      :host(:hover) div#date-control svg {
-        fill: black;
-      }
-
-      :host(:focus) div#date-control svg {
-        fill: black;
-      }
-
-      div#date-container div#date-clear svg {
-        fill: white;
-      }
-
-      :host(:hover) div#date-container.dirty div#date-clear svg {
-        fill: rgb(188, 188, 188);
-      }
-
-      :host(:focus) div#date-container.dirty div#date-clear svg {
-        fill: rgb(188, 188, 188);
-      }
-
-      div#date-container div#date-control div#date-spin {
-        display: inline-flex;
-        flex-direction: column;
-        min-width: 8px;
-        height: 12px;
-      }
-
-      div#date-container div#date-spin > svg {
-        flex: 0 0 7px;
-      }
-
-      div#date-spin svg:hover {
-        background-color: rgb(234, 234, 234);
-      }
-
-      div#date-picker-dropdown svg:hover {
-        background-color: rgb(234, 234, 234);
-      }
-    </style>
     <div id="date-container">
        <div id="date-edit">
          <span id="date-edit-content"><span tabindex="0"
@@ -137,13 +138,28 @@
        </div>
     </div>
   </template>
+
   <script>
     "use strict";
-    Polymer({is: 'date-input'}, {
-      year: -1,
-      month: -1,
-      day: -1,
-      dirty: false,
+    Polymer({
+      is: 'date-input',
+
+      properties: {
+        year: {
+          type: Number,
+          value: -1
+        },
+        month: {
+          type: Number,
+          value: -1
+        },
+        day: {
+          type: Number,
+          value: -1
+        }
+      },
+
+      _dirty: false,
 
       created: function() {
         /* if (!this.hasAttribute('tabindex'))
@@ -170,7 +186,7 @@
             di.year = -1;
             di.month = -1;
             di.day = -1;
-            di.dirty = false;
+            di._dirty = false;
             di.updateView();
           }, false);
         }
@@ -182,14 +198,14 @@
           var el = r.activeElement;
           var curVal = di.handleUpDown(el, 'up');
           di.setDateValue(el, curVal);
-          di.dirty = true;
+          di._dirty = true;
           di.updateView();
         }, false);
         sd.addEventListener('click', function() {
           var el = r.activeElement;
           var curVal = di.handleUpDown(el, 'down');
           di.setDateValue(el, curVal);
-          di.dirty = true;
+          di._dirty = true;
           di.updateView();
         }, false);
 
@@ -265,7 +281,7 @@
       setDateValue: function(el, val) {
         if (val < 0)
           return;
-        this.dirty = true;
+        this._dirty = true;
         switch (el.id) {
         case 'yy':
           this.year = val;
@@ -283,7 +299,7 @@
         var target = el.id;
         var rangeMin = 0;
         var rangeMax = 0;
-        var curVal = 0;
+         var curVal = 0;
 
         switch (target) {
         case 'yy':
@@ -355,7 +371,7 @@
         y.textContent = di.year < 0 ? 'yyyy' : di.year;
         m.textContent = di.month < 0 ? 'mm' : di.month;
         d.textContent = di.day < 0 ? 'dd' : di.day;
-        if (di.dirty)
+        if (di._dirty)
           r.querySelector('#date-container').classList.add('dirty');
         else
           r.querySelector('#date-container').classList.remove('dirty');
