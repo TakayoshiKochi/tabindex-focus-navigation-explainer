@@ -1,5 +1,5 @@
 <link rel="import" href="../../components/polymer/polymer.html">
-<polymer-element name="date-input">
+<dom-module id="date-input">
   <template>
     <style>
       :host {
@@ -139,7 +139,7 @@
   </template>
   <script>
     "use strict";
-    Polymer('date-input', {
+    Polymer({is: 'date-input'}, {
       year: -1,
       month: -1,
       day: -1,
@@ -362,4 +362,4 @@
       }
     });
   </script>
-</polymer-element>
+</dom-module>
