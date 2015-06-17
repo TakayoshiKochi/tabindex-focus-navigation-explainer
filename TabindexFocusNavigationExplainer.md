@@ -6,6 +6,8 @@ Oct. 30, 2014
 
 last update: Jun 17, 2015
 
+Note: This is work-in-progress markdown version.
+
 ##Motivation
 
 As bugs being filed at [W3C bug 25473](https://www.w3.org/Bugs/Public/show_bug.cgi?id=25473), and at [Chromium issue 380445](https://code.google.com/p/chromium/issues/detail?id=380445), Custom Elements have issues on handling focus navigation when it involves both shadow DOM and tabindex. This work tries to resolve the case that a shadow host can be focused, while the actual focus needs to be on its internal element, and the author wants to have control over focus navigation order (TAB / SHIFT + TAB). This also tries to explain how an HTML element can be made tab focusable without `tabindex` (like `<a href=”...”>`) in terms of web components technology, so that a custom element behave exactly in the same manner as such elements natively implemented on browsers.
