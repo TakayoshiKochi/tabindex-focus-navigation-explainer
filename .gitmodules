@@ -1,0 +1,3 @@
+[submodule "components/polymer"]
+	path = components/polymer
+	url = git@github.com:Polymer/polymer.git
