@@ -1,3 +1,0 @@
-[submodule "components/webcomponentsjs"]
-	path = components/webcomponentsjs
-	url = git@github.com:webcomponents/webcomponentsjs.git
