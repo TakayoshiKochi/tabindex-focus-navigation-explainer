@@ -4,9 +4,7 @@ Takayoshi Kochi <kochi@chromium.org>
 
 Oct. 30, 2014
 
-last update: Jun 17, 2015
-
-Note: This is work-in-progress markdown version.
+last update: Jun 19, 2015
 
 ##Motivation
 
