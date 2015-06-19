@@ -17,20 +17,18 @@ As bugs being filed at [W3C bug 25473](https://www.w3.org/Bugs/Public/show_bug.c
 In this document we are tackling 2 problems which are both related to tabindex focus navigation.
 
 
-The first issue is about the controllability of tab navigation ordering. It is possible for an element to have multiple focusable fields (e.g. `<input type=”date”>` which has 3 focusable fields on a desktop browser’s implementation). Such an element can be tab focusable, and the sequential tab navigation order in the document is controllable via tabindex attribute with positive value (There is some discussions to discourage or prohibit usage of positive values for tabindex. See discussion archived at [here](http://lists.w3.org/Archives/Public/public-html/2014Oct/thread.html#msg27)).
+The first issue is about the controllability of tab navigation ordering. It is possible for an element to have multiple focusable fields (e.g. `<input type=”date”>` which has 3 focusable fields on a desktop browser’s implementation). Such an element can be tab focusable, and the sequential tab navigation order in the document is controllable via `tabindex` attribute with positive value (There is some discussions to discourage or prohibit usage of positive values for tabindex. See discussion archived at [here](http://lists.w3.org/Archives/Public/public-html/2014Oct/thread.html#msg27)).
 
 When a web author wants to create his/her own one with multiple focusable fields using combination of Shadow DOM and Custom Elements, the default focus navigation behavior ([defined in the Shadow DOM spec](https://w3c.github.io/webcomponents/spec/shadow/#focus-navigation)) works well, but once he/she tries to customize the tab navigation order by giving the custom element (a shadow host) a tabindex, tab navigation order breaks in an unexpected way.
 
-* Forward direction: focus stops at the host element itself, and will not skip to the first element inside the custom element.
-* Backward direction: when focus exits from inside the shadow tree, focus stops at the host element itself.
+* Forward direction: **focus stops at the host element itself**, and will not skip to the first element inside the custom element.
+* Backward direction: when focus exits from inside the shadow tree, **focus stops at the host element itself**.
 
-`insert diagram here`
+![Sample Shadow Tree](https://raw.githubusercontent.com/TakayoshiKochi/tabindex-focus-navigation-explainer/master/shadow-tree.png)
 
 In the example diagram above, forward navigation order is 1-2-A-B-3, and backward navigation order is 3-B-A-2-1. Stopping at 2 is the unwanted behavior. This problem is not specific to custom elements, but can apply to any shadow hosts.
 
-
-The second issue is about tab focusability. In the HTML5 spec, any element can be focusable via TAB key by adding a `tabindex` attribute, which is defined in the [tabindex](https://html.spec.whatwg.org/multipage/interactionhtml#attr-tabindex) attribute section. The first problem above is a side effect of this attribute. On the other hand, without a `tabindex` attribute, some elements are natively tab focusable (e.g. <a> element with href attribute). The HTML5 spec introduces an implicit “[tabindex focus flag](https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)” to explain the behavior of these elements. There is no way at this point to create an element with the same capability with Custom Elements, Shadow DOM or both. If this is resolved, focus behavior of those native elements can be explained in terms of Custom Elements and Shadow DOM.
-
+The second issue is about tab focusability. In the HTML5 spec, any element can be focusable via TAB key by adding a `tabindex` attribute, which is defined in the [tabindex](https://html.spec.whatwg.org/multipage/interactionhtml#attr-tabindex) attribute section. The first problem above is a side effect of this attribute. On the other hand, without a `tabindex` attribute, some elements are natively tab focusable (e.g. `<a>` element with `href` attribute). The HTML5 spec introduces an implicit “[tabindex focus flag](https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)” to explain the behavior of these elements. There is no way at this point to create an element with the same capability with Custom Elements, Shadow DOM or both. If this is resolved, focus behavior of those native elements can be explained in terms of Custom Elements and Shadow DOM.
 
 These 2 issues can be viewed as two sides of the same coin, while they could be orthogonal issues. We are trying to solve these two issues at once.
 
@@ -43,7 +41,6 @@ We don’t solve spatial navigation (up, down, left, right) issue within Shadow 
 
 ## Proposed Solution
 We would like to solve the problem by decomposing the convoluted tabIndex property into 3 properties, `tabIndex`, `focusable`, and `delegatesFocus`, with keeping backward compatibility as much as possible.
-
 
 * `tabIndex` continues to mean the navigation order when it is read, but when it is written, it affects other properties to be updated (see below)
 * `focusable` is a read-only boolean property which reflects whether the element is focusable (i.e. mouse click on the element or calling `focus()` method will get focus on it). This corresponds to HTML5 spec’s “tabindex focus flag”.  As this is a read-only property, you cannot override this property on regular elements, but for shadow hosts, it can reflect its shadow root’s “force focusable” flag, which can be set via `setForceFocusable()` method.
@@ -71,7 +68,7 @@ partial dictionary ShadowRootInit {
 
 Note: [ShadowRootInit dictionary](https://w3c.github.io/webcomponents/spec/shadow/#shadowrootinit-dictionary) was introduced recently in the shadow DOM spec.
 
-`focusable` returns the value of “tabindex focus flag”. By default, `focusable` is `false` for any HTML element except for those which are defined to be “tabindex focus flag” set in the spec. For those elements whose “tabindex focus flag” is false, the flag can be turned on by setting `tabindex` attribute.
+`focusable` returns the value of “tabindex focus flag”. By default, `focusable` is `false` for any HTML element except for those which are defined to be [“tabindex focus flag” set in the spec](https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable). For those elements whose “tabindex focus flag” is false, the flag can be turned on by setting `tabindex` attribute.
 
 Here are tables of how `focusable` is expected to return.
 
