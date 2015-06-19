@@ -73,86 +73,42 @@ Note: [ShadowRootInit dictionary](https://w3c.github.io/webcomponents/spec/shado
 Here are tables of how `focusable` is expected to return.
 
 On non-default-focusable element (e.g. `<div>`, `<a name="">`)
-tabIndex
-	ommitted
-	-1
-	>=0
-	focusable
-	false
-	true
-	true
-	navigation order
-	N/A
-	skipped
-	value of tabindex
 
+| tabIndex | omitted | -1 | >=0 |
+| ---------| :------: |:--:|:---:|
+|**`focusable`**|false|true|true|
+|**navigation order**|N/A|skipped|value of `tabindex`|
 
 On a default-focusable element (e.g. `<input type=text>`, `<div contenteditable="true">, <a href="">`)
-tabIndex
-	omitted
-	-1
-	>=0
-	focusable
-	true
-	true
-	true
-	navigation order
-	equivalent to tabindex=0
-	skipped
-	value of tabindex
 
+| tabIndex | omitted | -1 | >=0 |
+| -------- | :-----: |:--:|:---:|
+|**`focusable`**|true|true|true|
+|**navigation order**|equivalent to `tabindex="0"`|skipped|value of `tabindex`|
 
 `delegatesFocus` controls how a shadow host behave for focus.  By default, `delegatesFocus` is `false` and can be turned on when it is specified for `createShadowRoot()`’s parameter.
 
-Here’s the short summary of comparison when `delegatesFocus` is `true` or `false`. The difference is emphasized with yellow background.
+Here’s the short summary of comparison when `delegatesFocus` is `true` or `false`. The difference is emphasized with italic.
 
 Shadow Host (non-default-focusable element, `delegatesFocus=false`, existing behavior)
-tabIndex
-	unspecified
-	-1
-	>=0
-	focusable
-	false
-	true
-	true
-	navigation order
-	N/A
-	skipped (host only, if there is any focusable elements in shadow root, they are in the order)
-	value of tabindex
-	matches :focus when element in shadow is focused
-	no
-	no
-	no
-	focus() slides to inner focusable element
-	no
-	no
-	no
 
+| tabIndex | omitted | -1 | >=0 |
+| -------- | :-----: |:--:|:---:|
+|**`focusable`**|false|true|true|
+|navigation order|N/A|skipped (host only, if there is any focusable elements in shadow root, they **are** in the order)|value of `tabindex`|
+|matches `:focus` when element in shadow is focused|no|no|no|
+|`focus()` slides to inner focusable element|no|no|no|
 
 To give some context, the above table is also accurate for non-shadow DOM cases, e.g. it would hold for simple `<div>`s (potentially with focusable children).
 
-Shadow Host (non-default focusable element, delegatesFocus=true)
-tabIndex
-	unspecified
-	-1
-	>=0
-	focusable
-	true
-	true
-	true
-	navigation order
-	equivalent to tabindex=0
-	whole focusable elements under shadow root are skipped
-	value of tabindex
-	matches :focus when element in shadow is focused
-	yes
-	yes
-	yes
-	focus() slides to inner focusable element
-	yes
-	yes
-	yes
+Shadow Host (non-default focusable element, `delegatesFocus=true`)
 
+| tabIndex | omitted | -1 | >=0 |
+| -------- | :-----: |:--:|:---:|
+|**`focusable`**|_true_|true|true|
+|navigation order|_equivalent to `tabindex="0"`_|_whole focusable elements under shadow root are skipped_|value of `tabindex`|
+|matches `:focus` when element in shadow is focused|_yes_|_yes_|_yes_|
+|`focus()` slides to inner focusable element|_yes_|_yes_|_yes_|
 
 By using ShadowRoot’s `setForceFocusable(boolean flag)` method, you can forcibly set its shadow host’s focusable property to be always true regardless of `tabIndex` or `delegatesFocus`, when `true` is given for `setForceFocusable()`.  If `false` is given, behavior of shadow host is same as described above.
 
