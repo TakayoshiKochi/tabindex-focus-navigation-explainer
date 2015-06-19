@@ -116,68 +116,59 @@ By using ShadowRoot’s `setForceFocusable(boolean flag)` method, you can forcib
 If a shadow host delegates focus (its shadow root was created with `delegatesFocus=true`), the following behavior is expected.
 
 
-1. TAB navigation order
-
+1. TAB navigation order<br>
 If tabindex is 0 or positive and the containing shadow tree has one or more focusable elements, forward tab navigation will skip focus on the host itself and forwards focus to the first focusable element, then to the second, …, to the last focusable element until focus blurs to the next focusable element within the same treescope as the host element. For backward tab navigation, the last focusable element gets focus first, and after the first focusable element, until focus blurs to the previous focusable element in the same treescope as the host element. This behavior applies recursively on a shadow host in a shadow tree.
 If the host element has no focusable element under it, tab navigation just skips the host and its shadow tree.
-In the case of tabindex=-1, the whole shadow tree is skipped for the tab navigation. See discussion below for whether or not user agent should skip the whole subtree or not.
+In the case of `tabindex="-1"`, the whole shadow tree is skipped for the tab navigation. See discussion below for whether or not user agent should skip the whole subtree or not.
 
-2. `focus()` method behavior
-
+2. `focus()` method behavior<br>
 Invoking focus() method on the host element will delegate the focus the first focusable element in its subtree. This applies recursively for nested shadow trees. If the shadow root doesn’t contain any focusable element, the host itself gets focus.
 
-3. `autofocus` attribute
-
+3. [`autofocus` attribute](https://html.spec.whatwg.org/multipage/forms.html#autofocusing-a-form-control:-the-autofocus-attribute)<br>
 If autofocus attribute is specified, the focus is forwarded like focus() method when the page load finishes.
 
-4. Response to mouse click
+4. Response to mouse click<br>
+If focusable area within the shadow tree is clicked, the element gets focus. If non-focusable area is clicked, the shadow host gets focus. This is analogous to when `<div>` with `tabindex` attribute gets focus when its content is clicked. The difference is, that the nearest focusable shadow host up in the tree gets focus, skipping non-focusable shadow hosts.
 
-If focusable area within the shadow tree is clicked, the element gets focus. If non-focusable area is clicked, the shadow host gets focus. This is analogous to when <div> with tabindex attribute gets focus when its content is clicked. The difference is, that the nearest focusable shadow host up in the tree gets focus, skipping non-focusable shadow hosts.
+5. CSS `:focus` pseudo-class<br>
+A selector like `#host:focus` matches when focus is in any of its descendent shadow tree.
 
-5. CSS :focus pseudo-class
-
-A selector like #host:focus matches when focus is in any of its descendent shadow tree.
-
-6. document.activeElement and shadowroot.activeElement
-
-This doesn’t change. The shadow host becomes activeElement when an element in its shadow tree has focus.
+6. `document.activeElement` and `ShadowRoot.activeElement`<br>
+These don’t change. The shadow host becomes activeElement when an element in its shadow tree has focus.
 
 
-If you want to control which element gets first focus when forward or backward navigation comes to the component, you can use tabindex for each element within the component.
+If you want to control which element gets first focus when forward or backward navigation comes to the component, you can use `tabindex` attribute for each element within the component.
 
 
 ## Alternatives Considered
 The following solutions are considered.
-1. Add `willFocusCallback()` / `willBlurCallback()` with direction (forward/backward) as a parameter for Custom Elements
-
+1. Add `willFocusCallback()` / `willBlurCallback()` with direction (forward/backward) as a parameter for Custom Elements<br>
 At first I pursued the idea of adding these callbacks to Custom Element’s callback registry. One thing I noticed was that we need such facility for shadow hosts, not only for custom elements. It is okay to add this to Custom Elements, and have authors use Custom Elements instead of raw shadow host if they need the capability. This certainly adds ability to change low-level behavior of focus for custom elements, but I’m still unsure any viable use cases.
 
-2. Add direction attribute in focus event object
+2. Add `direction` attribute in focus event object<br>
+This idea is orthogonal to adding `tabStop`, and can be added independently, not exclusively. Though this alone might be able to solve focusing issues, authors have to handle focus event and change the behavior by script, while with `tabStop` attribute authors can define the behavior declaratively, and it is definitely easier and simpler. Therefore this can be added later if there is viable use case that `tabStop` alone cannot control the subtle behavior.
 
-This idea is orthogonal to adding tabStop, and can be added independently, not exclusively. Though this alone might be able to solve focusing issues, authors have to handle focus event and change the behavior by script, while with tabStop attribute authors can define the behavior declaratively, and it is definitely easier and simpler. Therefore this can be added later if there is viable use case that tabStop alone cannot control the subtle behavior.
-
-3. Add tabStop attribute to Element
-
-This is the initial Blink implementation tried to achieve this. This worked to some extent, but was confusing, as tabStop attribute value is only honored for shadow hosts and not applicable to e.g. focusable <div contentEditable=”true”>. Also, setting tabindex attribute will also change tabStop as well to maintain backward compatibility, which was also confusing and have problems parsing attributes when both attributes are specified on an element (e.g. <my-element tabindex=0 tabstop=”true”>.)
+3. Add `tabStop` attribute to Element<br>
+This is the initial Blink implementation tried to achieve this. This worked to some extent, but was confusing, as `tabStop` attribute value is only honored for shadow hosts and not applicable to e.g. focusable `<div contentEditable=”true”>`. Also, setting `tabindex` attribute will also change `tabStop` as well to maintain backward compatibility, which was also confusing and have problems parsing attributes when both attributes are specified on an element (e.g. `<my-element tabindex=0 tabstop=”true”>`.)
 
 
 ## Discussions / Limitations / Unresolved issues
 
-* No focusable element in shadow but delegatesFocus=true, what is expected for focus() / tabbing?
-2 options: 1 - skip this element completely, 2 - focus the host element itself. We preferred 1 for tabbing, 2 for focus().  This may be confusing.
-* There is a new proposed :focus-within pseudo class (spec) which might be used instead of extending :focus.
-* Consider aria-activedescendant, and a11y in general.
-* Shadow DOM spec does not explicitly say about the behavior when tabindex=-1 is specified for a shadow host. As currently implemented in Chrome, only the shadow host is skipped from the sequential navigation order but the nodes in its shadow tree are visited. However it should make sense sequential tab navigation order completely ignore the descendent shadow trees under the shadow host. (additional homework) In that case, tab navigation order within shadow tree will not escape to its host’s tree scope? (filed as GitHub issue #86)
-* Make the behavior of delegatesFocus=true on shadow hosts default? (GitHub issue #105)
-* Due to HTML<->DOM reflection, <a> behavior cannot be explained via custom elements fully (when href attribute is specified, focusable turns true, while href attribute is removed, focusable turns false), because focusable is a read-only attribute.
-* What about onfocus event handling for delegatesFocus=true?  The event does not propagate over shadow boundary, thus when an inner element is focused, the host doesn’t get focus event, while CSS :focus starts to match.  Inconsistent?
-* Shall we move this doc to GitHub?
+* No focusable element in shadow but `delegatesFocus=true`, what is expected for `focus()` / tabbing?<br>
+2 options: 1 - skip this element completely, 2 - focus the host element itself. We preferred 1 for tabbing, 2 for `focus()`. This may be confusing.
+* There is a new proposed `:focus-within` pseudo class ([spec](http://dev.w3.org/csswg/selectors-4/#focus-within-pseudo)) which might be used instead of extending `:focus`.
+* Consider `aria-activedescendant`, and a11y in general.
+* Shadow DOM spec does not explicitly say about the behavior when `tabindex="-1"` is specified for a shadow host. As currently implemented in Chrome, only the shadow host is skipped from the sequential navigation order but the nodes in its shadow tree are visited. However it should make sense sequential tab navigation order completely ignore the descendent shadow trees under the shadow host. (additional homework) In that case, tab navigation order within shadow tree will not escape to its host’s tree scope? (filed as [GitHub issue #86](https://github.com/w3c/webcomponents/issues/86))
+* Make the behavior of delegatesFocus=true on shadow hosts default? ([GitHub issue #105](https://github.com/w3c/webcomponents/issues/105))
+* Due to HTML<->DOM reflection, `<a>` behavior cannot be explained via custom elements fully (when `href` attribute is specified, `focusable` turns `true`, while `href` attribute is removed, `focusable` turns `false`), because `focusable` is a read-only attribute. - `setForceFocusable` explain this?
+* What about `onfocus` event handling for `delegatesFocus=true`?  The event does not propagate over shadow boundary, thus when an inner element is focused, the host doesn’t get focus event, while CSS `:focus` starts to match.  Inconsistent?
+* Shall we move this doc to GitHub? - Done!
 
 
 ## Demo
 https://takayoshikochi.github.io/tabindex-focus-navigation-explainer/demo/date-input.html
 (work-in-progress, the demo still uses old “tabStop” property)
-You see `<date-input>` `<input type=date>` fields.  The former is built with web components (source), the latter is native implementation.
+You see `<date-input>` `<input type=date>` fields.  The former is built with web components (as a polyme element), the latter is native implementation.
 
 
 ## Revision History
@@ -194,3 +185,4 @@ Added a table for tabindex/isTabStop combination and expected behaviors.
 - Mar. 19, 2015 Clarification about HTML attribute and DOM property reflection, renamed isTabStop to tabStop.  Added a limitation about explaining <a> with custom element + tabStop.
 - Jun. 1, 2015 Major update to replace tabStop with delegatesFocus. Now it can be specified for shadow roots only, via createShadowRoot()’s parameter. tabindex="-1" on shadow host is now defined to skip all the subtree.
 - Jun. 17, 2015 Added ShadowRoot.setForceFocusable() to toggle shadow root’s focusable programattically.
+- Jun. 19, 2015 Moved to GitHub, converted to markdown format.
