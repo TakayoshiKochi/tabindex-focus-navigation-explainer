@@ -142,6 +142,7 @@ If you want to control which element gets first focus when forward or backward n
 
 ## Alternatives Considered
 The following solutions are considered.
+
 1. Add `willFocusCallback()` / `willBlurCallback()` with direction (forward/backward) as a parameter for Custom Elements<br>
 At first I pursued the idea of adding these callbacks to Custom Element’s callback registry. One thing I noticed was that we need such facility for shadow hosts, not only for custom elements. It is okay to add this to Custom Elements, and have authors use Custom Elements instead of raw shadow host if they need the capability. This certainly adds ability to change low-level behavior of focus for custom elements, but I’m still unsure any viable use cases.
 
