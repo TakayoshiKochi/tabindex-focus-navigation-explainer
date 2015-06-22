@@ -47,7 +47,7 @@ We would like to solve the problem by decomposing the convoluted tabIndex proper
 
 The IDL looks like:
 
-```idl
+```WebIDL
 partial interface Element {
   ShadowRoot createShadowRoot(ShadowRootInit shadowRootInitDict);
   readonly attribute focusable;
