@@ -50,6 +50,6 @@ A selector like `#host:focus` matches when focus is in any of its descendant sha
 
 ## Demo
 
-1. [<date-input> component](https://takayoshikochi.github.io/tabindex-focus-navigation-explainer/demo/date-input.html)
+1. [```<date-input>``` component](https://takayoshikochi.github.io/tabindex-focus-navigation-explainer/demo/date-input.html)
 
-You see `<date-input>` `<input type=date>` fields.  The former is built with web components (as a polyme element), the latter is native implementation.
+You see ```<date-input>``` ```<input type=date>``` fields.  The former is built with web components (as a polyme element), the latter is native implementation.
