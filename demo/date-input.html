@@ -1,41 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,height=device-height,minimum-scale=1,initial-scale=1,user-scalable=yes">
-<title>date-input demo</title>
-<!-- components -->
-<script src="../components/webcomponentsjs/webcomponents-lite.js"></script>
-<script>
-  window.Polymer = window.Polymer || {};
-  window.Polymer.dom = 'shadow';
-</script>
-<link rel="import" href="../components/polymer/polymer.html">
-<link rel="import" href="../components/date-input/date-input.html">
-<!-- inline styles and scripts -->
-<style>
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: 'RobotoDraft', sans-serif;
-}
-</style>
-<script>
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,height=device-height,minimum-scale=1,initial-scale=1,user-scalable=yes">
+  <title>date-input demo</title>
+
+  <!-- components -->
+  <script src="../components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script>
+    window.Polymer = window.Polymer || {};
+    window.Polymer.dom = 'shadow';
+
+    function setTabIndex(id) {
+      var s = document.getElementById(id);
+      var v = s.options[s.selectedIndex].value;
+      var i;
+      switch (id) {
+        case 'sel1':
+          i = document.getElementById('input');
+          if (v == 'none' && i.hasAttribute('tabindex'))
+            i.removeAttribute('tabindex');
+          else
+            i.setAttribute('tabindex', v);
+          break;
+        case 'sel2':
+          i = document.getElementById('dateinput');
+          if (v == 'none' && i.hasAttribute('tabindex'))
+            i.removeAttribute('tabindex');
+          else
+            i.setAttribute('tabindex', v);
+          break;
+        case 'sel3':
+          i = document.getElementById('inputdate');
+          if (v == 'none' && i.hasAttribute('tabindex'))
+            i.removeAttribute('tabindex');
+          else
+            i.setAttribute('tabindex', v);
+          break;
+      }
+    }
+  </script>
+  <link rel="import" href="../components/polymer/polymer.html">
+  <link rel="import" href="../components/date-input/date-input.html">
+  <!-- inline styles and scripts -->
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'RobotoDraft', sans-serif;
+  }
+
+  div.footnote {
+    color: red;
+  }
+  </style>
+  <script>
+  </script>
 </head>
+
 <body unresolved>
 <p>
-<input placeholder="dummy input">
+&lt;input type="text"&gt;<br>
+<input type="text" placeholder="dummy input" id="input">
+<select tabindex="-1" onchange="setTabIndex('sel1')" id="sel1">
+  <option value="none">none</option>
+  <option value="-1">-1</option>
+  <option value="0">0</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
 </p>
+
 <p>
 &lt;date-input&gt;<br>
-<date-input></date-input>
+<date-input id="dateinput"></date-input>
+<select tabindex="-1" onchange="setTabIndex('sel2')" id="sel2">
+  <option value="none">none</option>
+  <option value="-1">-1</option>
+  <option value="0">0</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
 </p>
+
 <p>
-&lt;input type=date&gt;<br>
-<input type="date">
+&lt;input type="date"&gt;<br>
+<input type="date" id="inputdate">
+<select tabindex="-1" onchange="setTabIndex('sel3')" id="sel3">
+  <option value="none">none</option>
+  <option value="-1">-1</option>
+  <option value="0">0</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
 </p>
+
 <div id="con">
+</div>
+<div class="footnote">
+You can change the tabindex on the right dropdown.
 </div>
 </body>
 <script>
@@ -43,7 +115,7 @@ var con = document.getElementById("con");
 
 function updateConsole() {
    var ae = document.activeElement;
-   var s = "document.activeElement: " + ae.tagName + '#' + (ae.id || 'None');
+   var s = "Current document.activeElement: " + ae.tagName + '#' + (ae.id || 'None');
    con.textContent = s;
    window.setTimeout(updateConsole, 1000);
 }
