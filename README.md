@@ -1,2 +1,6 @@
 # tabindex-focus-navigation-explainer
-Tab Index Focus Navigation Explainer
+
+This branch is for GitHub pages.
+
+See
+https://takayoshikochi.github.io/tabindex-focus-navigation-explainer
