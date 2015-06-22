@@ -53,3 +53,7 @@ A selector like `#host:focus` matches when focus is in any of its descendant sha
 1. [```<date-input>``` component](https://takayoshikochi.github.io/tabindex-focus-navigation-explainer/demo/date-input.html)
 
 You see ```<date-input>``` ```<input type=date>``` fields.  The former is built with web components (as a polyme element), the latter is native implementation.
+
+## References
+- Read the [full document](https://github.com/TakayoshiKochi/tabindex-focus-navigation-explainer/blob/master/README.md) for more complete documentation.
+- Follow [crbug/496005](http://crbug.com/496005) for Blink implementation.
