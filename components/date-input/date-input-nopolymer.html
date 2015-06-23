@@ -143,17 +143,15 @@
   var thisDoc = document.currentScript.ownerDocument;
 
   proto.createdCallback = function() {
-    var delegatesFocus = false;
-    if (!this.hasAttribute('delegatesFocus'))
-      delegatesFocus = true;
+    var delegatesFocus = this.hasAttribute('delegatesFocus');
     var template = thisDoc.querySelector('#date-input-template');
     this.createShadowRoot({'delegatesFocus': delegatesFocus})
         .appendChild(document.importNode(template.content, true));
-  }
+  };
 
   proto.attachedCallback = function() {
     var di = this;
-    var r = di.shadowRoot;
+    var root = di.shadowRoot;
 
     // Y/M/D fields
     this.addEventListener('keydown', function(e) {
@@ -164,29 +162,30 @@
     }, false);
 
     // Clear button
-    var cl = r.querySelector('#date-clear');
+    var cl = root.querySelector('#date-clear');
     if (cl) {
       cl.addEventListener('click', function() {
-        di.year = -1;
-        di.month = -1;
-        di.day = -1;
+        di._year = -1;
+        di._month = -1;
+        di._day = -1;
         di._dirty = false;
         di.updateView();
       }, false);
-    }
+    };
 
     // Spin button
-    var su = r.querySelector('#spin-up');
-    var sd = r.querySelector('#spin-down');
+    var su = root.querySelector('#spin-up');
+    var sd = root.querySelector('#spin-down');
+    // TODO: Support auto-repeat when pressed long time.
     su.addEventListener('click', function(e) {
-      var el = r.activeElement;
+      var el = root.activeElement;
       var curVal = di.handleUpDown(el, 'up');
       di.setDateValue(el, curVal);
       di._dirty = true;
       di.updateView();
     }, false);
     sd.addEventListener('click', function() {
-      var el = r.activeElement;
+      var el = root.activeElement;
       var curVal = di.handleUpDown(el, 'down');
       di.setDateValue(el, curVal);
       di._dirty = true;
@@ -194,73 +193,74 @@
     }, false);
 
     // Drop down
-    var dd = r.querySelector('#date-picker-dropdown');
+    var dd = root.querySelector('#date-picker-dropdown');
     dd.addEventListener('click', function(e) {
-      window.alert('not implemented');
+      //window.alert('not implemented');
+      console.log('dropdown: not implemented');
     }, false);
   }
 
-  proto.year = -1;
-  proto.month = -1;
-  proto.day = -1;
+  proto._year = -1;
+  proto._month = -1;
+  proto._day = -1;
   proto._dirty = false,
 
   proto.handleKey = function(e) {
-      var el = e.path[0];
-      var key =  e.keyCode
+    var el = e.path[0];
+    var key =  e.keyCode
 
-      var target = el.id;
-      var rangeMin = 0;
-      var rangeMax = 0;
-      var curVal = 0;
+    var target = el.id;
+    var rangeMin = 0;
+    var rangeMax = 0;
+    var curVal = 0;
 
-      switch (target) {
-      case 'yy':
-        rangeMin = 1;
-        rangeMax = 275760;
-        curVal = this.year;
+    switch (target) {
+    case 'yy':
+      rangeMin = 1;
+      rangeMax = 275760;
+      curVal = this._year;
+      break;
+    case 'mm':
+      rangeMin = 1;
+      rangeMax = 12;
+      curVal = this._month;
+      break;
+    case 'dd':
+      rangeMin = 1;
+      rangeMax = 31;
+      curVal = this._day;
+      break;
+    }
+
+    if (key >= 48 && key <= 57) {
+      // numeric (0-9)
+      if (curVal < 0)
+        curVal = key - 48;
+      else
+        curVal = curVal * 10 + key - 48;
+      // Handle overflow
+      if (curVal > rangeMax)
+        curVal = rangeMax;
+      else if (curVal >= 0 && curVal < rangeMin)
+        curVal = rangeMin;
+    } else {
+      switch (key) {
+      case 38: // up
+        curVal = this.handleUpDown(el, 'up');
         break;
-      case 'mm':
-        rangeMin = 1;
-        rangeMax = 12;
-        curVal = this.month;
+      case 40: // down
+        curVal = this.handleUpDown(el, 'down');
         break;
-      case 'dd':
-        rangeMin = 1;
-        rangeMax = 31;
-        curVal = this.day;
+      case 37: // left
+        if (target != 'mm')
+          this.moveFocus(el.previousElementSibling);
+        break;
+      case 39: // right
+        if (target != 'yy')
+          this.moveFocus(el.nextElementSibling);
         break;
       }
-
-      if (key >= 48 && key <= 57) {
-        // numeric (0-9)
-        if (curVal < 0)
-          curVal = key - 48;
-        else
-          curVal = curVal * 10 + key - 48;
-        // Handle overflow
-        if (curVal > rangeMax)
-          curVal = rangeMax;
-        else if (curVal >= 0 && curVal < rangeMin)
-          curVal = rangeMin;
-      } else {
-        switch (key) {
-        case 38: // up
-          curVal = this.handleUpDown(el, 'up');
-          break;
-        case 40: // down
-          curVal = this.handleUpDown(el, 'down');
-          break;
-        case 37: // left
-          if (target != 'mm')
-            this.moveFocus(el.previousElementSibling);
-          break;
-        case 39: // right
-          if (target != 'yy')
-            this.moveFocus(el.nextElementSibling);
-          break;
-        }
-     }
+   }
 
      this.setDateValue(el, curVal);
      this.updateView();
@@ -273,13 +273,13 @@
     this._dirty = true;
     switch (el.id) {
     case 'yy':
-      this.year = val;
+      this._year = val;
       break;
     case 'mm':
-      this.month = val;
+      this._month = val;
       break;
     case 'dd':
-      this.day = val;
+      this._day = val;
       break;
     }
   };
@@ -294,17 +294,17 @@
     case 'yy':
       rangeMin = 1;
       rangeMax = 275760;
-      curVal = this.year;
+      curVal = this._year;
       break;
     case 'mm':
       rangeMin = 1;
       rangeMax = 12;
-      curVal = this.month;
+      curVal = this._month;
       break;
     case 'dd':
       rangeMin = 1;
       rangeMax = 31;
-      curVal = this.day;
+      curVal = this._day;
       break;
     }
 
@@ -353,17 +353,18 @@
 
   proto.updateView = function() {
     var di = this;
-    var r = di.shadowRoot;
-    var y = r.querySelector('#yy');
-    var m = r.querySelector('#mm');
-    var d = r.querySelector('#dd');
-    y.textContent = di.year < 0 ? 'yyyy' : di.year;
-    m.textContent = di.month < 0 ? 'mm' : di.month;
-    d.textContent = di.day < 0 ? 'dd' : di.day;
-    if (di._dirty)
-      r.querySelector('#date-container').classList.add('dirty');
-    else
-      r.querySelector('#date-container').classList.remove('dirty');
+    var root = di.shadowRoot;
+    var y = root.querySelector('#yy');
+    var m = root.querySelector('#mm');
+    var d = root.querySelector('#dd');
+    y.textContent = di._year < 0 ? 'yyyy' : di._year;
+    m.textContent = di._month < 0 ? 'mm' : di._month;
+    d.textContent = di._day < 0 ? 'dd' : di._day;
+    if (di._dirty) {
+      root.querySelector('#date-container').classList.add('dirty');
+    } else {
+      root.querySelector('#date-container').classList.remove('dirty');
+    }
   };
 
   document.registerElement('date-input', {'prototype': proto});
